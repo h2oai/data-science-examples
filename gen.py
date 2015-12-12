@@ -23,6 +23,9 @@ class Category:
             return self.name
 
         parent_full_name = self.parent_category.full_name()
+        if parent_full_name == "":
+            return self.name
+
         return parent_full_name + "/" + self.name
 
     def emit(self):
@@ -143,7 +146,7 @@ def main(argv):
     os.chdir(script_dir)
 
     m = Manager()
-    root = os.path.abspath(os.path.join(os.getcwd(), "h2o"))
+    root = os.path.abspath(os.path.join(os.getcwd(), "examples"))
     m.build(root, None)
     m.emit()
 
