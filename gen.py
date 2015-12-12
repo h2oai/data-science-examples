@@ -9,16 +9,25 @@ class Category:
 
     """
 
-    def __init__(self, name, abspath_dir):
+    def __init__(self, name, abspath_dir, parent_category):
         self.name = name
         self.abspath_dir = abspath_dir
+        self.parent_category = parent_category
         self.examples = []
 
     def add_example(self, example):
         self.examples.append(example)
 
+    def full_name(self):
+        if self.parent_category is None:
+            return self.name
+
+        parent_full_name = self.parent_category.full_name()
+        return parent_full_name + "/" + self.name
+
     def emit(self):
-        print("CATEGORY: " + self.name + ", " + self.abspath_dir)
+        if len(self.examples) > 0:
+            print("CATEGORY: " + self.full_name() + ", " + self.abspath_dir)
         for example in self.examples:
             example.emit()
 
@@ -34,7 +43,7 @@ class Example:
         self.category = category
 
     def emit(self):
-        print("    EXAMPLE: " + self.category + ", " + self.name + ", " + self.abspath_dir)
+        print("    EXAMPLE: " + self.name + ", " + self.abspath_dir)
 
 
 class Manager:
@@ -54,7 +63,7 @@ class Manager:
         print("")
         sys.exit(1)
 
-    def parse_category(self, abspath_dir, category_description_file):
+    def parse_category(self, abspath_dir, category_description_file, parent_category):
         f = open(category_description_file)
         line = f.readline().rstrip()
         f.close()
@@ -63,7 +72,7 @@ class Manager:
             self.error("Directory " + abspath_dir + " has / character in Category name (" + line + ")")
         if len(category_name) == 0:
             self.error("Directory " + abspath_dir + " has empty Category name")
-        category = Category(category_name, abspath_dir)
+        category = Category(category_name, abspath_dir, parent_category)
         return category
 
     def parse_example(self, abspath_dir, example_description_file, category):
@@ -78,8 +87,12 @@ class Manager:
         example = Example(example_name, abspath_dir, category)
         return example
 
-    def build(self, abspath_dir, current_category):
+    def build(self, abspath_dir, parent_category):
         used_this_dir = None
+        current_category = parent_category
+
+        if not os.path.exists(abspath_dir):
+            self.error("Directory " + abspath_dir + " does not exist")
 
         # Check to see if this directory contains a category.
         category_description_file = os.path.join(abspath_dir, "cat.txt")
@@ -87,7 +100,7 @@ class Manager:
             if used_this_dir is not None:
                 self.error("Directory " + abspath_dir +
                            " has Category metadata but is already used as a " + used_this_dir)
-            current_category = self.parse_category(abspath_dir, category_description_file)
+            current_category = self.parse_category(abspath_dir, category_description_file, parent_category)
             self.categories.append(current_category)
             used_this_dir = "Category"
 
@@ -99,24 +112,20 @@ class Manager:
                            " has Example metadata but is already used as a " + used_this_dir)
             example = self.parse_example(abspath_dir, example_description_file, current_category)
             self.examples.append(example)
-            current_category.add_exmaple(example)
+            current_category.add_example(example)
             used_this_dir = "Example"
 
         if used_this_dir is None:
             self.error("Directory " + abspath_dir + " has neither Category nor Example metadata")
 
         # Search subdirectories for more content.
-        entries = sorted(os.listdir(abspath_dir))
-        for entry in entries:
-            if os.path.isdir(entry):
-                if entry == ".git":
-                    continue
-                if entry == ".idea":
-                    continue
-                if entry == "examples":
-                    continue
-                abspath_entry = os.path.join(abspath_dir, entry)
-                self.build(abspath_entry, current_category)
+        abspath_idx = os.path.join(abspath_dir, "idx")
+        if os.path.exists(abspath_idx):
+            with open(abspath_idx) as f:
+                for line in f:
+                    entry = line.strip()
+                    abspath_entry = os.path.join(abspath_dir, entry)
+                    self.build(abspath_entry, current_category)
 
     def emit(self):
         for category in self.categories:
