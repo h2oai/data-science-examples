@@ -12,7 +12,7 @@ def relative_hyperlink(name):
             rh += c
         else:
             rh += "_"
-    return rh
+    return rh.lower()
 
 
 class Category:
