@@ -367,9 +367,12 @@ class Manager:
     @staticmethod
     def _emit_jumbotron():
         print("""
-    <div class="jumbotron">
+    <div class="jumbotron text-center">
         <h1>Data Science Examples</h1>
         <em>A collection of data science examples implemented across a variety of languages and libraries.</em>
+        <hr>
+        <h3><a href="https://github.com/tomkraljevic/gh-pages-side-by-side-code-examples/blob/gh-pages/README.md">
+        [How to contribute]</a></h3>
     </div>
 """)
 
