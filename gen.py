@@ -5,6 +5,16 @@ import sys
 import subprocess
 
 
+def relative_hyperlink(name):
+    rh = ""
+    for c in name:
+        if ('a' <= c <= 'z') or ('A' <= c <= 'Z') or ('0' <= c <= '9'):
+            rh += c
+        else:
+            rh += "_"
+    return rh
+
+
 class Category:
     def __init__(self, name, abspath_dir, parent_category, index_in_parent_category):
         self.name = name
@@ -25,6 +35,9 @@ class Category:
             return self.name
 
         return parent_full_name + " / " + self.name
+
+    def relative_hyperlink(self):
+        return relative_hyperlink(self.full_name())
 
     def full_number(self):
         if self.index_in_parent_category is None:
@@ -71,16 +84,7 @@ class Example:
         return self.parent_category.full_name() + " / " + self.name
 
     def relative_hyperlink(self):
-        fn = self.full_name()
-        fn2 = ""
-        for c in fn:
-            if ('a' <= c <= 'z') or ('A' <= c <= 'Z') or ('0' <= c <= '9'):
-                fn2 += c
-            elif c == "/":
-                fn2 += "__"
-            else:
-                fn2 += "_"
-        return fn2
+        return relative_hyperlink(self.full_name())
 
     def emit_toc(self):
         print("        <li><a href=\"#" +
@@ -192,6 +196,7 @@ class Manager:
     def __init__(self):
         self.categories = []
         self.examples = []
+        self.duplicate_checker = {}
         pass
 
     @staticmethod
@@ -211,6 +216,7 @@ class Manager:
         if len(category_name) == 0:
             self.error("Directory " + abspath_dir + " has empty Category name")
         category = Category(category_name, abspath_dir, parent_category, index_in_parent_category)
+        self._check_unique(category)
         return category
 
     def parse_example(self, abspath_dir, example_name_file, parent_category, index_in_parent_category):
@@ -223,6 +229,7 @@ class Manager:
         if len(example_name) == 0:
             self.error("Directory " + abspath_dir + " has empty Example name")
         example = Example(example_name, abspath_dir, parent_category, index_in_parent_category)
+        self._check_unique(example)
         return example
 
     def build(self, abspath_dir, parent_category, index_in_parent_category):
@@ -293,6 +300,13 @@ class Manager:
     # ---------------------------------------------------------------
     # Private methods below this line.
     # ---------------------------------------------------------------
+
+    def _check_unique(self, item):
+        rh = item.relative_hyperlink()
+        if rh in self.duplicate_checker:
+            self.error("Directory " + item.abspath_dir + " has a conflict with " + self.duplicate_checker[rh])
+        else:
+            self.duplicate_checker[rh] = item.abspath_dir
 
     @staticmethod
     def _emit_doctype():
