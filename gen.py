@@ -373,10 +373,13 @@ class Manager:
         <h1>Data Science Examples</h1>
         <em>A collection of data science examples implemented across a variety of languages and libraries.</em>
         <hr>
-        <h3><a href="https://github.com/tomkraljevic/gh-pages-side-by-side-code-examples/blob/gh-pages/README.md">
+        <h3>
+        <a href="https://github.com/tomkraljevic/gh-pages-side-by-side-code-examples/blob/gh-pages/README.md">
         [How to contribute]</a>
         <a href="https://github.com/tomkraljevic/gh-pages-side-by-side-code-examples/graphs/contributors">
         [List of contributors]</a>
+        <a href="report_an_issue.html">
+        [Report an issue]</a>
         </h3>
     </div>
 """)
