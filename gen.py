@@ -400,12 +400,12 @@ class Manager:
         <em>A collection of data science examples implemented across a variety of languages and libraries.</em>
         <hr>
         <h3>
-        <a href="https://github.com/tomkraljevic/gh-pages-side-by-side-code-examples/blob/gh-pages/README.md">
-        [How to contribute]</a>
-        <a href="https://github.com/tomkraljevic/gh-pages-side-by-side-code-examples/graphs/contributors">
-        [List of contributors]</a>
-        <a href="report_an_issue.html">
-        [Report an issue]</a>
+            <a href="https://github.com/tomkraljevic/gh-pages-side-by-side-code-examples/blob/gh-pages/README.md">
+            [How to contribute]</a>
+            <a href="https://github.com/tomkraljevic/gh-pages-side-by-side-code-examples/graphs/contributors">
+            [List of contributors]</a>
+            <a href="report_an_issue.html">
+            [Report an issue]</a>
         </h3>
     </div>
 """)
@@ -434,10 +434,10 @@ class Manager:
         print("        </thead>")
         print("        <tbody>")
         for tag in sorted(self.tags.keys()):
-            print("        <tr>")
-            print("            <td>" + tag + "</td>")
+            print("            <tr>")
+            print("                <td>" + tag + "</td>")
             list_of_examples_for_tag = self.tags[tag]
-            print("            <td>")
+            print("                <td>")
             i = 0
             while i < len(list_of_examples_for_tag):
                 example = list_of_examples_for_tag[i]
@@ -445,14 +445,14 @@ class Manager:
                     maybe_comma = ","
                 else:
                     maybe_comma = ""
-                print("<a href=#" +
+                print("                    <a href=#" +
                       example.relative_hyperlink() + ">" +
                       example.name +
                       maybe_comma +
                       "</a>")
                 i += 1
-            print("            </td>")
-            print("        </tr>")
+            print("                </td>")
+            print("            </tr>")
         print("        </tbody>")
         print("    </table>")
 
