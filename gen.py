@@ -60,8 +60,26 @@ class Example:
     def full_number(self):
         return self.parent_category.full_number() + "." + str(self.index_in_parent_category)
 
+    def full_name(self):
+        return self.parent_category.full_name() + "/" + self.name
+
+    def relative_hyperlink(self):
+        fn = self.full_name()
+        fn2 = ""
+        for c in fn:
+            if ('a' <= c <= 'z') or ('A' <= c <= 'Z') or ('0' <= c <= '9'):
+                fn2 += c
+            elif c == "/":
+                fn2 += "__"
+            else:
+                fn2 += "_"
+        return fn2
+
     def emit(self):
-        print("    EXAMPLE:  " + self.full_number() + "  " + self.name + "  " + self.abspath_dir)
+        print("    EXAMPLE")
+        print("        " + self.full_number() + " " + self.name)
+        print("        " + self.abspath_dir)
+        print("        " + self.relative_hyperlink())
 
 
 class Manager:
