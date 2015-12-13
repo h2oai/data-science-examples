@@ -40,7 +40,7 @@ git commit
 git push
 ```
 
-## Directory layout
+## Top-level directory layout
 
 **README.md**   
 This file.
@@ -70,43 +70,11 @@ Some helper packages used by the examples (ex package for R).
 Static resources (jquery, bootstrap, highlight.js).
 
 
-## Adding a new category
+## Adding a new case for an existing example
 
-* Create a new directory.  The name of the directory is not used for any of the generated output.
+Usually this is as easy as just dropping in one more file with the right name that gen.py knows to look for.  You need to add that file in the one specific already-existing example directory.
 
-* Add your new directory to the idx file of the category that contains it.
-
-* Add a cat.txt file in your new directory.  This is one line that contains the category name.
-
-* Add an idx file in your new directory.  idx is a multi line file.  each line contains the name of a directory.  each directory is either a sub-category or an example.  items appear in the order they are included in the idx file.
-
-* Note that the top-level category (Data Science Examples) is special and generally ignored by gen.py so that "Data Science Examples" isn't repeated all over the place.
-
-
-## Adding a new example
-
-* Create a new directory.  The name of the directory is not used for any of the generated output.
-
-* Add your new directory to the idx file of the category that contains it.
-
-* Add a ex.txt file in your new directory.  This is one line that contains the example name.
-
-* Add a ex.md file in your new directory.  This is a markdown file that describes the example.  For consistency with the generated code from gen.py, this should not include H1, H2 or H3 tags.  This may include H4, H5, H6 tags.
-
-* The example description markdown file ex.md is converted to html using the node **markdown** tool.
-
-* Create as many code example files as you have.
-  * ex-R.R
-  * ex-h2o.R
-  * ... etc.
-
-* Code example files are copied verbatim into the generated examples.html.
-
-> The names of the code example files must match exactly what gen.py expects.
-
-### Finding data files
-
-The ex R package has a locate function which you may find helpful.
+Unless you want to add a totally new kind of example, in which case read on...
 
 
 ## Adding a new kind of example (i.e. language type)
@@ -125,6 +93,46 @@ Adding a new kind of example means adding an element to each of these arrays.
 * The tabs array is the name of the tab as seen by the user.
 * The files array is the name of the file checked for by gen.py.
 
+
+## Adding a new example
+
+* Create a new directory.  The name of the directory is not used for any of the generated output.
+
+* Add your new directory to the idx file of the category that contains it.
+
+* Add a ex.txt file in your new directory.  This is one line that contains the example name.
+
+* Add a ex.md file in your new directory.  This is a markdown file that describes the example.  For consistency with the generated code from gen.py, this should not include H1, H2 or H3 tags.  This may include H4, H5, H6 tags.
+
+* The example description markdown file ex.md is converted to html using the node **markdown** tool.
+
+* Create a single code file for each kind of example you want to provide.
+  * ex-R.R
+  * ex-h2o.R
+  * ... etc.
+
+* Code example files are copied verbatim into the generated examples.html.
+
+> The names of the code example files must match exactly what gen.py expects.
+
+### Finding data files
+
+The ex R package has a locate function which you may find helpful.
+
+
+## Adding a new category (or subcategory)
+
+* Create a new directory.  The name of the directory is not used for any of the generated output.
+
+* Add your new directory to the idx file of the category that contains it.
+
+* Add a cat.txt file in your new directory.  This is one line that contains the category name.
+
+* Add an idx file in your new directory.  idx is a multi line file.  each line contains the name of a directory.  each directory is either a sub-category or an example.  items appear in the order they are included in the idx file.
+
+* Note that the top-level category (Data Science Examples) is special and generally ignored by gen.py so that "Data Science Examples" isn't repeated all over the place.
+
+
 <br>
 <hr>
 
@@ -139,6 +147,7 @@ Testing will be driven by a jenkins job that makes some assumptions.
 * Assumption:  Tests can be run in any order.
 * Assumption:  The test itself will be started with the cwd that the test file lives in.
 * Assumption:  The ex package will be installed when R is run.
+* Assumption:  The H2O package will be installed when R is run.
 
 Other do's and dont's:
 
