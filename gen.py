@@ -39,11 +39,25 @@ class Category:
 
         return parent_full_number + "." + str(self.index_in_parent_category)
 
-    def emit(self):
+    def emit_toc(self):
+        if self.index_in_parent_category is None:
+            return
+        print("")
+        print("    <h2>" + "Section " + self.full_number() + ".  " + self.name + "</h2>")
+        print("    <ul>")
+        for example in self.examples:
+            example.emit_toc()
+        print("    </ul>")
+
+    def emit_examples(self):
+        for example in self.examples:
+            example.emit_example()
+
+    def debug(self):
         if len(self.examples) > 0:
             print("CATEGORY:  " + self.full_number() + "  " + self.full_name() + "  " + self.abspath_dir)
         for example in self.examples:
-            example.emit()
+            example.debug()
 
 
 class Example:
@@ -75,7 +89,20 @@ class Example:
                 fn2 += "_"
         return fn2
 
-    def emit(self):
+    def emit_toc(self):
+        print("        <li><a href=\"#" +
+              self.relative_hyperlink() +
+              "\">" +
+              self.full_number() +
+              "  " +
+              self.name +
+              "</a>" +
+              "</li>")
+
+    def emit_example(self):
+        pass
+
+    def debug(self):
         print("    EXAMPLE")
         print("        " + self.full_number() + " " + self.name)
         print("        " + self.abspath_dir)
@@ -169,8 +196,110 @@ class Manager:
                     self.build(abspath_entry, parent_category, index_in_parent_category)
 
     def emit(self):
+        self._emit_doctype()
+        self._emit_html_start()
+        self._emit_head()
+        self._emit_body_start()
+        self._emit_container_start()
+        self._emit_jumbotron()
+        self._emit_toc()
+        self._emit_examples()
+        self._emit_container_end()
+        self._emit_body_end()
+        self._emit_html_end()
+
+    def debug(self):
         for category in self.categories:
-            category.emit()
+            category.debug()
+
+    # ---------------------------------------------------------------
+    # Private methods below this line.
+    # ---------------------------------------------------------------
+
+    @staticmethod
+    def _emit_doctype():
+        print("<!DOCTYPE html>")
+
+    @staticmethod
+    def _emit_html_start():
+        print("""
+<html lang=\"en\">
+""")
+
+    @staticmethod
+    def _emit_html_end():
+        print("""
+</html>
+""")
+
+    @staticmethod
+    def _emit_head():
+        print("""
+<head>
+    <title>Data Science Examples</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="static/jquery/jquery-1.11.3.min.js"></script>
+
+    <link rel="stylesheet" href="static/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="static/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="static/highlight/styles/default.css">
+    <script src="static/highlight/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+</head>
+""")
+
+    @staticmethod
+    def _emit_body_start():
+        print("""
+<body>""")
+
+    @staticmethod
+    def _emit_body_end():
+        print("""
+</body>
+""")
+
+    @staticmethod
+    def _emit_container_start():
+        print("""
+<div class="container">
+""")
+
+    @staticmethod
+    def _emit_container_end():
+        print("""
+</div>
+""")
+
+    @staticmethod
+    def _emit_jumbotron():
+        print("""
+    <div class="jumbotron">
+        <h1>Data Science Examples</h1>
+        <em>A collection of data science examples implemented across a variety of languages and libraries.</em>
+    </div>
+""")
+
+    def _emit_toc(self):
+        print("""
+    <div class="bg-primary">
+        <h1>Table of Contents</h1>
+    </div>
+""")
+        for category in self.categories:
+            category.emit_toc()
+
+    def _emit_examples(self):
+        print("""
+    <div class="bg-primary">
+        <h1>The Examples</h1>
+    </div>
+""")
+        for category in self.categories:
+            category.emit_examples()
 
 
 def main(argv):
@@ -186,6 +315,7 @@ def main(argv):
     m = Manager()
     root = os.path.abspath(os.path.join(os.getcwd(), "examples"))
     m.build(root, None, None)
+    # m.debug()
     m.emit()
 
 
