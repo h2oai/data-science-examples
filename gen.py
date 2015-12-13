@@ -2,6 +2,7 @@
 
 import os
 import sys
+import subprocess
 
 
 class Category:
@@ -21,13 +22,13 @@ class Category:
 
     def full_name(self):
         if self.parent_category is None:
-            return self.name
+            return ""
 
         parent_full_name = self.parent_category.full_name()
         if parent_full_name == "":
             return self.name
 
-        return parent_full_name + "/" + self.name
+        return parent_full_name + " / " + self.name
 
     def full_number(self):
         if self.index_in_parent_category is None:
@@ -75,7 +76,7 @@ class Example:
         return self.parent_category.full_number() + "." + str(self.index_in_parent_category)
 
     def full_name(self):
-        return self.parent_category.full_name() + "/" + self.name
+        return self.parent_category.full_name() + " / " + self.name
 
     def relative_hyperlink(self):
         fn = self.full_name()
@@ -100,13 +101,97 @@ class Example:
               "</li>")
 
     def emit_example(self):
-        pass
+        print("    <div id=\"" + self.relative_hyperlink() + "\">")
+        self._emit_nav_tabs()
+        self._emit_tab_content()
+        print("    </div>")
 
     def debug(self):
         print("    EXAMPLE")
         print("        " + self.full_number() + " " + self.name)
         print("        " + self.abspath_dir)
         print("        " + self.relative_hyperlink())
+
+    # ---------------------------------------------------------------
+    # Private methods below this line.
+    # ---------------------------------------------------------------
+
+    _lang__________ = ["lang-r", "lang-r"]
+    _tabs_to_check_ = ["R",      "h2o-R"]
+    _files_to_check = ["ex-R.R", "ex-h2o.R"]
+
+    def _emit_nav_tabs(self):
+        print("        <h3>" +
+              self.full_number() + ". " +
+              self.full_name() +
+              "</h3>")
+
+        ref_prefix = self.full_number().replace(".", "_")
+        print("        <ul class=\"nav nav-tabs\">")
+        print("            <li class=\"active\"><a data-toggle=\"tab\" href=\"#" +
+              ref_prefix + "_description" +
+              "\">" +
+              "Description</a></li>")
+
+        i = 0
+        while i < len(self._files_to_check):
+            fn = self._files_to_check[i]
+            abspath_fn = os.path.join(self.abspath_dir, fn)
+            if os.path.exists(abspath_fn):
+                tab_name = self._tabs_to_check_[i]
+                print("            <li><a data-toggle=\"tab\" href=\"#" +
+                      ref_prefix + "_" + tab_name +
+                      "\">" +
+                      tab_name +
+                      "</a></li>")
+            i += 1
+
+        print("        </ul>")
+
+    @staticmethod
+    def _emit_markdown_as_html(abspath_filename):
+        sys.stdout.flush()
+        subprocess.check_call(["markdown", abspath_filename])
+
+    @staticmethod
+    def _emit_file(abspath_filename):
+        f = open(abspath_filename, 'r')
+        lines = f.readlines()
+        for line in lines:
+            print line.rstrip()
+        f.close()
+
+    def _emit_tab_content(self):
+        ref_prefix = self.full_number().replace(".", "_")
+        print("        <div class=\"tab-content\">")
+        print("            <div id=\"" +
+              ref_prefix + "_description" +
+              "\" class=\"tab-pane fade in active\">"
+              )
+        print("<div class=\"well\">")
+        example_description_file = os.path.join(self.abspath_dir, "ex.md")
+        self._emit_markdown_as_html(example_description_file)
+        print("</div>")
+        print("            </div>")
+
+        i = 0
+        while i < len(self._files_to_check):
+            fn = self._files_to_check[i]
+            abspath_fn = os.path.join(self.abspath_dir, fn)
+            if os.path.exists(abspath_fn):
+                tab_name = self._tabs_to_check_[i]
+                print("            <div id=\"" +
+                      ref_prefix + "_" + tab_name +
+                      "\" class=\"tab-pane fade\">")
+                print("<pre>")
+                print("<code class=\"" + self._lang__________[i] + "\">")
+                self._emit_file(abspath_fn)
+                print("</code>")
+                print("</pre>")
+                print("            </div>")
+            i += 1
+
+        print("        </div>")
 
 
 class Manager:
@@ -126,8 +211,8 @@ class Manager:
         print("")
         sys.exit(1)
 
-    def parse_category(self, abspath_dir, category_description_file, parent_category, index_in_parent_category):
-        f = open(category_description_file)
+    def parse_category(self, abspath_dir, category_name_file, parent_category, index_in_parent_category):
+        f = open(category_name_file)
         line = f.readline().rstrip()
         f.close()
         category_name = line
@@ -138,8 +223,8 @@ class Manager:
         category = Category(category_name, abspath_dir, parent_category, index_in_parent_category)
         return category
 
-    def parse_example(self, abspath_dir, example_description_file, parent_category, index_in_parent_category):
-        f = open(example_description_file)
+    def parse_example(self, abspath_dir, example_name_file, parent_category, index_in_parent_category):
+        f = open(example_name_file)
         line = f.readline().rstrip()
         f.close()
         example_name = line
@@ -157,23 +242,26 @@ class Manager:
             self.error("Directory " + abspath_dir + " does not exist")
 
         # Check to see if this directory contains a category.
-        category_description_file = os.path.join(abspath_dir, "cat.txt")
-        if os.path.exists(category_description_file):
+        category_name_file = os.path.join(abspath_dir, "cat.txt")
+        if os.path.exists(category_name_file):
             if used_this_dir is not None:
                 self.error("Directory " + abspath_dir +
                            " has Category metadata but is already used as a " + used_this_dir)
-            parent_category = self.parse_category(abspath_dir, category_description_file,
+            parent_category = self.parse_category(abspath_dir, category_name_file,
                                                   parent_category, index_in_parent_category)
             self.categories.append(parent_category)
             used_this_dir = "Category"
 
         # Check to see if this directory contains an example.
-        example_description_file = os.path.join(abspath_dir, "ex.txt")
-        if os.path.exists(example_description_file):
+        example_name_file = os.path.join(abspath_dir, "ex.txt")
+        if os.path.exists(example_name_file):
             if used_this_dir is not None:
                 self.error("Directory " + abspath_dir +
                            " has Example metadata but is already used as a " + used_this_dir)
-            example = self.parse_example(abspath_dir, example_description_file,
+            example_description_file = os.path.join(abspath_dir, "ex.md")
+            if not os.path.exists(example_description_file):
+                self.error("Directory " + abspath_dir + " does not have description file ex.md")
+            example = self.parse_example(abspath_dir, example_name_file,
                                          parent_category, index_in_parent_category)
             self.examples.append(example)
             parent_category.add_example(example)
