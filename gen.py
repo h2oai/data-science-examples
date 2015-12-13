@@ -9,10 +9,11 @@ class Category:
 
     """
 
-    def __init__(self, name, abspath_dir, parent_category):
+    def __init__(self, name, abspath_dir, parent_category, index_in_parent_category):
         self.name = name
         self.abspath_dir = abspath_dir
         self.parent_category = parent_category
+        self.index_in_parent_category = index_in_parent_category
         self.examples = []
 
     def add_example(self, example):
@@ -28,9 +29,19 @@ class Category:
 
         return parent_full_name + "/" + self.name
 
+    def full_number(self):
+        if self.index_in_parent_category is None:
+            return ""
+
+        parent_full_number = self.parent_category.full_number()
+        if parent_full_number == "":
+            return str(self.index_in_parent_category)
+
+        return parent_full_number + "." + str(self.index_in_parent_category)
+
     def emit(self):
         if len(self.examples) > 0:
-            print("CATEGORY: " + self.full_name() + ", " + self.abspath_dir)
+            print("CATEGORY:  " + self.full_number() + "  " + self.full_name() + "  " + self.abspath_dir)
         for example in self.examples:
             example.emit()
 
@@ -40,13 +51,17 @@ class Example:
 
     """
 
-    def __init__(self, name, abspath_dir, category):
+    def __init__(self, name, abspath_dir, parent_category, index_in_parent_category):
         self.name = name
         self.abspath_dir = abspath_dir
-        self.category = category
+        self.parent_category = parent_category
+        self.index_in_parent_category = index_in_parent_category
+
+    def full_number(self):
+        return self.parent_category.full_number() + "." + str(self.index_in_parent_category)
 
     def emit(self):
-        print("    EXAMPLE: " + self.name + ", " + self.abspath_dir)
+        print("    EXAMPLE:  " + self.full_number() + "  " + self.name + "  " + self.abspath_dir)
 
 
 class Manager:
@@ -66,7 +81,7 @@ class Manager:
         print("")
         sys.exit(1)
 
-    def parse_category(self, abspath_dir, category_description_file, parent_category):
+    def parse_category(self, abspath_dir, category_description_file, parent_category, index_in_parent_category):
         f = open(category_description_file)
         line = f.readline().rstrip()
         f.close()
@@ -75,10 +90,10 @@ class Manager:
             self.error("Directory " + abspath_dir + " has / character in Category name (" + line + ")")
         if len(category_name) == 0:
             self.error("Directory " + abspath_dir + " has empty Category name")
-        category = Category(category_name, abspath_dir, parent_category)
+        category = Category(category_name, abspath_dir, parent_category, index_in_parent_category)
         return category
 
-    def parse_example(self, abspath_dir, example_description_file, category):
+    def parse_example(self, abspath_dir, example_description_file, parent_category, index_in_parent_category):
         f = open(example_description_file)
         line = f.readline().rstrip()
         f.close()
@@ -87,12 +102,11 @@ class Manager:
             self.error("Directory " + abspath_dir + " has / character in Example name (" + line + ")")
         if len(example_name) == 0:
             self.error("Directory " + abspath_dir + " has empty Example name")
-        example = Example(example_name, abspath_dir, category)
+        example = Example(example_name, abspath_dir, parent_category, index_in_parent_category)
         return example
 
-    def build(self, abspath_dir, parent_category):
+    def build(self, abspath_dir, parent_category, index_in_parent_category):
         used_this_dir = None
-        current_category = parent_category
 
         if not os.path.exists(abspath_dir):
             self.error("Directory " + abspath_dir + " does not exist")
@@ -103,8 +117,9 @@ class Manager:
             if used_this_dir is not None:
                 self.error("Directory " + abspath_dir +
                            " has Category metadata but is already used as a " + used_this_dir)
-            current_category = self.parse_category(abspath_dir, category_description_file, parent_category)
-            self.categories.append(current_category)
+            parent_category = self.parse_category(abspath_dir, category_description_file,
+                                                  parent_category, index_in_parent_category)
+            self.categories.append(parent_category)
             used_this_dir = "Category"
 
         # Check to see if this directory contains an example.
@@ -113,9 +128,10 @@ class Manager:
             if used_this_dir is not None:
                 self.error("Directory " + abspath_dir +
                            " has Example metadata but is already used as a " + used_this_dir)
-            example = self.parse_example(abspath_dir, example_description_file, current_category)
+            example = self.parse_example(abspath_dir, example_description_file,
+                                         parent_category, index_in_parent_category)
             self.examples.append(example)
-            current_category.add_example(example)
+            parent_category.add_example(example)
             used_this_dir = "Example"
 
         if used_this_dir is None:
@@ -124,11 +140,15 @@ class Manager:
         # Search subdirectories for more content.
         abspath_idx = os.path.join(abspath_dir, "idx")
         if os.path.exists(abspath_idx):
+            if used_this_dir == "Example":
+                self.error("Directory " + abspath_dir + " is an Example but has a category index")
             with open(abspath_idx) as f:
+                index_in_parent_category = 0
                 for line in f:
+                    index_in_parent_category += 1
                     entry = line.strip()
                     abspath_entry = os.path.join(abspath_dir, entry)
-                    self.build(abspath_entry, current_category)
+                    self.build(abspath_entry, parent_category, index_in_parent_category)
 
     def emit(self):
         for category in self.categories:
@@ -147,7 +167,7 @@ def main(argv):
 
     m = Manager()
     root = os.path.abspath(os.path.join(os.getcwd(), "examples"))
-    m.build(root, None)
+    m.build(root, None, None)
     m.emit()
 
 
