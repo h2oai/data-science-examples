@@ -84,7 +84,7 @@ class Example:
         return self.parent_category.full_name() + " / " + self.name
 
     def relative_hyperlink(self):
-        return relative_hyperlink(self.full_name())
+        return relative_hyperlink(self.name)
 
     def emit_toc(self):
         print("        <li><a href=\"#" +
@@ -413,7 +413,6 @@ def main(argv):
     m = Manager()
     root = os.path.abspath(os.path.join(os.getcwd(), "examples"))
     m.build(root, None, None)
-    # m.debug()
     m.emit()
 
 
