@@ -425,19 +425,36 @@ class Manager:
         <h1>Tags</h1>
     </div>
 """)
-        print("    <ul>")
+        print("    <table class=\"table table-bordered\">")
+        print("        <thead>")
+        print("            <tr>")
+        print("                <th>Tag</th>")
+        print("                <th>Related Examples</th>")
+        print("            </tr>")
+        print("        </thead>")
+        print("        <tbody>")
         for tag in sorted(self.tags.keys()):
-            print("        <li>" + tag)
+            print("        <tr>")
+            print("            <td>" + tag + "</td>")
             list_of_examples_for_tag = self.tags[tag]
-            print("            <ul>")
-            for example in list_of_examples_for_tag:
-                print("                <li><a href=#" +
+            print("            <td>")
+            i = 0
+            while i < len(list_of_examples_for_tag):
+                example = list_of_examples_for_tag[i]
+                if (i + 1) < len(list_of_examples_for_tag):
+                    maybe_comma = ","
+                else:
+                    maybe_comma = ""
+                print("<a href=#" +
                       example.relative_hyperlink() + ">" +
                       example.name +
-                      "</a></li>")
-            print("            </ul>")
-            print("        </li>")
-        print("    </ul>")
+                      maybe_comma +
+                      "</a>")
+                i += 1
+            print("            </td>")
+            print("        </tr>")
+        print("        </tbody>")
+        print("    </table>")
 
     def _emit_examples(self):
         print("""
