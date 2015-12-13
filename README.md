@@ -48,7 +48,7 @@ To view in Github Pages, click on the link below.
 
 **Goal: Provide support for tags**
 
-* TODO
+* Have a convenient way of tagging examples with descriptive words.
 
 ## Non-goals
 
@@ -163,6 +163,8 @@ Adding a new kind of example means adding an element to each of these arrays.
 * Add a 'ex.md' file in your new directory.  This is a markdown file that describes the example.  For consistency with the generated code from *gen.py*, this should not include H1, H2 or H3 tags.  This may include H4, H5, H6 tags.
 
 * The example description markdown file 'ex.md' is converted to html using the node **markdown** tool.
+
+* Optionally create an 'ex.tags' file with one tag per line.  Tags may include lower-case letters, numbers, underscores, and spaces.
 
 * Create a single code file for each kind of example you want to provide.
   * ex-R.R

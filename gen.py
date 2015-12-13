@@ -76,6 +76,7 @@ class Example:
         self.abspath_dir = abspath_dir
         self.parent_category = parent_category
         self.index_in_parent_category = index_in_parent_category
+        self.tags = []
 
     def full_number(self):
         return self.parent_category.full_number() + "." + str(self.index_in_parent_category)
@@ -196,6 +197,7 @@ class Manager:
     def __init__(self):
         self.categories = []
         self.examples = []
+        self.tags = {}
         self.duplicate_checker = {}
         pass
 
@@ -230,6 +232,15 @@ class Manager:
             self.error("Directory " + abspath_dir + " has empty Example name")
         example = Example(example_name, abspath_dir, parent_category, index_in_parent_category)
         self._check_unique(example)
+        example_tags_file = os.path.join(abspath_dir, "ex.tags")
+        if os.path.exists(example_tags_file):
+            f = open(example_tags_file)
+            for line in f:
+                tag = line.strip()
+                self._check_legal_tag(tag, example)
+                if len(tag) > 0:
+                    example.tags.append(tag)
+            f.close()
         return example
 
     def build(self, abspath_dir, parent_category, index_in_parent_category):
@@ -262,6 +273,7 @@ class Manager:
                                          parent_category, index_in_parent_category)
             self.examples.append(example)
             parent_category.add_example(example)
+            self._add_tags(example)
             used_this_dir = "Example"
 
         if used_this_dir is None:
@@ -288,6 +300,7 @@ class Manager:
         self._emit_container_start()
         self._emit_jumbotron()
         self._emit_toc()
+        self._emit_tags()
         self._emit_examples()
         self._emit_container_end()
         self._emit_body_end()
@@ -307,6 +320,19 @@ class Manager:
             self.error("Directory " + item.abspath_dir + " has a conflict with " + self.duplicate_checker[rh])
         else:
             self.duplicate_checker[rh] = item.abspath_dir
+
+    def _check_legal_tag(self, tag, item):
+        for c in tag:
+            if not(('a' <= c <= 'z') or ('0' <= c <= '9') or c == "_" or c == " "):
+                self.error("Directory " + item.abspath_dir + " has an invalid tag " + tag +
+                           " (characters must be a-z 0-9 _ and space)")
+
+    def _add_tags(self, example):
+        for tag in example.tags:
+            if tag not in self.tags:
+                self.tags[tag] = []
+            list_of_examples_for_tag = self.tags[tag]
+            list_of_examples_for_tag.append(example)
 
     @staticmethod
     def _emit_doctype():
@@ -392,6 +418,26 @@ class Manager:
 """)
         for category in self.categories:
             category.emit_toc()
+
+    def _emit_tags(self):
+        print("""
+    <div class="bg-primary">
+        <h1>Tags</h1>
+    </div>
+""")
+        print("    <ul>")
+        for tag in sorted(self.tags.keys()):
+            print("        <li>" + tag)
+            list_of_examples_for_tag = self.tags[tag]
+            print("            <ul>")
+            for example in list_of_examples_for_tag:
+                print("                <li><a href=#" +
+                      example.relative_hyperlink() + ">" +
+                      example.name +
+                      "</a></li>")
+            print("            </ul>")
+            print("        </li>")
+        print("    </ul>")
 
     def _emit_examples(self):
         print("""
