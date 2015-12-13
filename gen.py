@@ -6,10 +6,6 @@ import subprocess
 
 
 class Category:
-    """
-
-    """
-
     def __init__(self, name, abspath_dir, parent_category, index_in_parent_category):
         self.name = name
         self.abspath_dir = abspath_dir
@@ -62,10 +58,6 @@ class Category:
 
 
 class Example:
-    """
-
-    """
-
     def __init__(self, name, abspath_dir, parent_category, index_in_parent_category):
         self.name = name
         self.abspath_dir = abspath_dir
@@ -197,10 +189,6 @@ class Example:
 
 
 class Manager:
-    """
-
-    """
-
     def __init__(self):
         self.categories = []
         self.examples = []
