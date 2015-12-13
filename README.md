@@ -16,7 +16,22 @@ To view in Github Pages, click on the link below.
 The gen.py tool creates the result examples.html file.
 (Look at the trivial Makefile.)
 
-## Commands to run
+### Tools required to run the generator
+
+* Python (gen.py was developed with Python 2.7)
+* npm
+* npm's markdown command-line tool
+
+I installed the markdown tool on my Macbook Pro with the following command:
+
+```
+npm install markdown-to-html -g
+```
+
+
+### Commands to run
+
+On Macbook Pro:
 
 ```
 make
@@ -57,29 +72,35 @@ Static resources (jquery, bootstrap, highlight.js).
 
 ## Adding a new category
 
-* You need to add a cat.txt and idx file for each category.
+* Create a new directory.  The name of the directory is not used for any of the generated output.
 
-* cat.txt is one line that contains the category name.
+* Add your new directory to the idx file of the category that contains it.
 
-* idx is a multi line file.  each line contains the name of a directory.  each directory is either a sub-category or an example.  items appear in the order they are included in the idx file.
+* Add a cat.txt file in your new directory.  This is one line that contains the category name.
 
-* Note that the top-level category (Data Science Examples) is special and generally ignored by gen.py so that text isn't repeated over and over all over the place.
+* Add an idx file in your new directory.  idx is a multi line file.  each line contains the name of a directory.  each directory is either a sub-category or an example.  items appear in the order they are included in the idx file.
+
+* Note that the top-level category (Data Science Examples) is special and generally ignored by gen.py so that "Data Science Examples" isn't repeated all over the place.
 
 
 ## Adding a new example
 
-* Create a new directory.
+* Create a new directory.  The name of the directory is not used for any of the generated output.
 
 * Add your new directory to the idx file of the category that contains it.
 
-* Add an ex.txt file.  This is one line that contains the example name.
+* Add a ex.txt file in your new directory.  This is one line that contains the example name.
 
-* Add an ex.md file.  This is a markdown file that describes the example.  For consistency with the generated code from gen.py, this should not include H1, H2 or H3 tags.  This may include H4, H5, H6 tags.
+* Add a ex.md file in your new directory.  This is a markdown file that describes the example.  For consistency with the generated code from gen.py, this should not include H1, H2 or H3 tags.  This may include H4, H5, H6 tags.
+
+* The example description markdown file ex.md is converted to html using the node **markdown** tool.
 
 * Create as many code example files as you have.
   * ex-R.R
   * ex-h2o.R
   * ... etc.
+
+* Code example files are copied verbatim into the generated examples.html.
 
 > The names of the code example files must match exactly what gen.py expects.
 
@@ -124,3 +145,7 @@ Other do's and dont's:
 * Examples should not call h2o.shutdown().
 * H2O R tests will be run via:
   *  R -f ex-h2o.R
+
+## How to locally build and install the ex R package
+
+I did this with RStudio...  Need better instructions here.
