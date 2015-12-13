@@ -124,7 +124,9 @@ class Example:
         print("        <h3>" +
               self.full_number() + ". " +
               self.full_name() +
-              "</h3>")
+              "<a href=\"#" +
+              self.relative_hyperlink() +
+              "\"> <em>[link]</em></a></h3>")
 
         ref_prefix = self.full_number().replace(".", "_")
         print("        <ul class=\"nav nav-tabs\">")
