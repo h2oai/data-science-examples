@@ -5,6 +5,16 @@ import sys
 import subprocess
 
 
+def find_markdown():
+    p = "/usr/local/bin/markdown"
+    if os.path.exists(p):
+        return p
+
+    print("")
+    print("ERROR: markdown binary not found")
+    print("")
+    sys.exit(1)
+
 def relative_hyperlink(name):
     rh = ""
     for c in name:
@@ -150,7 +160,8 @@ class Example:
     @staticmethod
     def _emit_markdown_as_html(abspath_filename):
         sys.stdout.flush()
-        subprocess.check_call(["markdown", abspath_filename])
+        abspath_markdown = find_markdown()
+        subprocess.check_call(["node", abspath_markdown, abspath_filename])
 
     @staticmethod
     def _emit_file(abspath_filename):
