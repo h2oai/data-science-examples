@@ -15,6 +15,7 @@ def find_markdown():
     print("")
     sys.exit(1)
 
+
 def relative_hyperlink(name):
     rh = ""
     for c in name:
