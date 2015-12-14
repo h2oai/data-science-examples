@@ -124,9 +124,9 @@ class Example:
     # Private methods below this line.
     # ---------------------------------------------------------------
 
-    _lang__________ = ["lang-r", "lang-r", "lang-python"]
-    _tabs_to_check_ = ["R",      "h2o-R", "h2o-python"]
-    _files_to_check = ["ex-R.R", "ex-h2o.R", "ex-h2o.py"]
+    _lang__________ = ["lang-r", "lang-r",      "lang-python"]
+    _tabs_to_check_ = ["R",      "h2o-R",       "h2o-python"]
+    _files_to_check = ["ex-R.R", "ex-h2o.R",    "ex-h2o.py"]
 
     def _emit_nav_tabs(self):
         print("        <h3>" +
