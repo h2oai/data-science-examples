@@ -3,4 +3,5 @@
 .RData
 .DS_Store
 .idea
+data-science-examples.iml
 .Rbuildignore
