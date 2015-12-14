@@ -125,15 +125,15 @@
             <li class="active"><a data-toggle="tab" href="#1_1_description">Description</a></li>
             <li><a data-toggle="tab" href="#1_1_R">R</a></li>
             <li><a data-toggle="tab" href="#1_1_h2o-R">h2o-R</a></li>
+            <li><a data-toggle="tab" href="#1_1_h2o-python">h2o-python</a></li>
         </ul>
         <div class="tab-content">
             <div id="1_1_description" class="tab-pane fade in active">
 <div class="well">
 <p>This example shows a very simple example of how to parse a small CSV file.</p>
 <p>The well-known iris dataset is used.</p>
-<p>The H2O examples use the h2o.importFile method, which is a &quot;pull-into-h2o&quot; operation.</p>
-<p>This is a fast, scalable, highly optimized way to read data.  H2O pulls the data from a data store.  H2O initiates the data transfer as a read operation.</p>
-</div>
+<p>The H2O examples use the h2o.importFile method, which is a "pull-into-h2o" operation.</p>
+<p>This is a fast, scalable, highly optimized way to read data.  H2O pulls the data from a data store.  H2O initiates the data transfer as a read operation.</p></div>
             </div>
             <div id="1_1_R" class="tab-pane fade">
 <pre>
@@ -157,6 +157,17 @@ stopifnot(nrow(h2odf) == 150)
 </code>
 </pre>
             </div>
+            <div id="1_1_h2o-python" class="tab-pane fade">
+<pre>
+<code class="lang-python">
+import h2o
+h2o.init()
+path = "data/iris/iris_wheader.csv"
+df = h2o.import_file(path=path)
+assert df.nrow == 150
+</code>
+</pre>
+            </div>
         </div>
     </div>
     <div id="upload_csv_file__push_method_">
@@ -170,10 +181,9 @@ stopifnot(nrow(h2odf) == 150)
 <div class="well">
 <p>This example shows a very simple example of how to parse a small CSV file.</p>
 <p>The well-known iris dataset is used.</p>
-<p>The H2O examples use the h2o.uploadFile method, which is a &quot;push-to-h2o&quot; operation.</p>
+<p>The H2O examples use the h2o.uploadFile method, which is a "push-to-h2o" operation.</p>
 <p>This is not scalable, and only intended for smaller data sizes.  The client pushes the data from a local filesystem (for example on your laptop where R is running) to H2O.</p>
-<p>For big-data operations, you don&#39;t want the data stored on, or flowing through, the client.</p>
-</div>
+<p>For big-data operations, you don't want the data stored on, or flowing through, the client.</p></div>
             </div>
             <div id="1_2_h2o-R" class="tab-pane fade">
 <pre>
