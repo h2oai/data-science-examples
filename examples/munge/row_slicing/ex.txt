@@ -1,1 +1,1 @@
-Slicing H2O Frames (by row)
+How Do I Slice Rows From A Frame?

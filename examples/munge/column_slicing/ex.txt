@@ -1,1 +1,1 @@
-Slicing H2O Frames (by column)
+How do I Slice Columns From A Frame?
