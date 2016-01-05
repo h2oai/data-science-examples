@@ -52,6 +52,9 @@
 
     <h2>Section 2.  Munging Data</h2>
     <ul>
+        <li><a href="#slicing_h2o_frames__by_column_">2.1  Slicing H2O Frames (by column)</a></li>
+        <li><a href="#slicing_h2o_frames__by_row_">2.2  Slicing H2O Frames (by row)</a></li>
+        <li><a href="#replacing_values_in_h2o_frames">2.3  Replacing Values In H2O Frames</a></li>
     </ul>
 
     <h2>Section 3.  Training Models</h2>
@@ -88,6 +91,20 @@
                 </td>
             </tr>
             <tr>
+                <td>missing</td>
+                <td>
+                    <a href=#replacing_values_in_h2o_frames>Replacing Values In H2O Frames</a>
+                </td>
+            </tr>
+            <tr>
+                <td>munge</td>
+                <td>
+                    <a href=#slicing_h2o_frames__by_column_>Slicing H2O Frames (by column),</a>
+                    <a href=#slicing_h2o_frames__by_row_>Slicing H2O Frames (by row),</a>
+                    <a href=#replacing_values_in_h2o_frames>Replacing Values In H2O Frames</a>
+                </td>
+            </tr>
+            <tr>
                 <td>parse</td>
                 <td>
                     <a href=#import_csv_file__pull_method_>Import CSV file (pull method),</a>
@@ -104,6 +121,19 @@
                 <td>push</td>
                 <td>
                     <a href=#upload_csv_file__push_method_>Upload CSV file (push method)</a>
+                </td>
+            </tr>
+            <tr>
+                <td>replace</td>
+                <td>
+                    <a href=#replacing_values_in_h2o_frames>Replacing Values In H2O Frames</a>
+                </td>
+            </tr>
+            <tr>
+                <td>slice</td>
+                <td>
+                    <a href=#slicing_h2o_frames__by_column_>Slicing H2O Frames (by column),</a>
+                    <a href=#slicing_h2o_frames__by_row_>Slicing H2O Frames (by row)</a>
                 </td>
             </tr>
             <tr>
@@ -132,8 +162,9 @@
 <div class="well">
 <p>This example shows a very simple example of how to parse a small CSV file.</p>
 <p>The well-known iris dataset is used.</p>
-<p>The H2O examples use the h2o.importFile method, which is a "pull-into-h2o" operation.</p>
-<p>This is a fast, scalable, highly optimized way to read data.  H2O pulls the data from a data store.  H2O initiates the data transfer as a read operation.</p></div>
+<p>The H2O examples use the h2o.importFile method, which is a &quot;pull-into-h2o&quot; operation.</p>
+<p>This is a fast, scalable, highly optimized way to read data.  H2O pulls the data from a data store.  H2O initiates the data transfer as a read operation.</p>
+</div>
             </div>
             <div id="1_1_R" class="tab-pane fade">
 <pre>
@@ -181,9 +212,10 @@ assert df.nrow == 150
 <div class="well">
 <p>This example shows a very simple example of how to parse a small CSV file.</p>
 <p>The well-known iris dataset is used.</p>
-<p>The H2O examples use the h2o.uploadFile method, which is a "push-to-h2o" operation.</p>
+<p>The H2O examples use the h2o.uploadFile method, which is a &quot;push-to-h2o&quot; operation.</p>
 <p>This is not scalable, and only intended for smaller data sizes.  The client pushes the data from a local filesystem (for example on your laptop where R is running) to H2O.</p>
-<p>For big-data operations, you don't want the data stored on, or flowing through, the client.</p></div>
+<p>For big-data operations, you don&#39;t want the data stored on, or flowing through, the client.</p>
+</div>
             </div>
             <div id="1_2_h2o-R" class="tab-pane fade">
 <pre>
@@ -194,6 +226,282 @@ path = ex.locate("data/iris/iris_wheader.csv")
 h2o.init()
 h2odf = h2o.uploadFile(path)
 stopifnot(nrow(h2odf) == 150)
+</code>
+</pre>
+            </div>
+        </div>
+    </div>
+    <div id="slicing_h2o_frames__by_column_">
+        <h3>2.1. Munging Data / Slicing H2O Frames (by column)<a href="#slicing_h2o_frames__by_column_"> <em>[link]</em></a></h3>
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#2_1_description">Description</a></li>
+            <li><a data-toggle="tab" href="#2_1_R">R</a></li>
+            <li><a data-toggle="tab" href="#2_1_h2o-R">h2o-R</a></li>
+            <li><a data-toggle="tab" href="#2_1_h2o-python">h2o-python</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="2_1_description" class="tab-pane fade in active">
+<div class="well">
+<p>This example shows how to slice columns from a frame of data.</p>
+<p>H2O lazily slices out columns of data, and will only materialize a shared copy upon some type of triggering IO.</p>
+</div>
+            </div>
+            <div id="2_1_R" class="tab-pane fade">
+<pre>
+<code class="lang-r">
+path <- "data/iris/iris_wheader.csv"
+df <- read.csv(path)
+
+# slice 1 column by index
+c1 <- df[,1]
+
+# slice 1 column by name
+c1_1 <- df[, "sepal_len"]
+
+# slice cols by vector of indexes
+cols <- df[, 1:4]
+
+# slice cols by vector of names
+cols_1 <- df[, c("sepal_len", "sepal_wid", "petal_len", "petal_wid")]
+</code>
+</pre>
+            </div>
+            <div id="2_1_h2o-R" class="tab-pane fade">
+<pre>
+<code class="lang-r">
+library(h2o)
+path <- "data/iris/iris_wheader.csv"
+h2o.init()
+df <- h2o.importFile(path)
+
+# slice 1 column by index
+c1 <- df[,1]
+
+# slice 1 column by name
+c1_1 <- df[, "sepal_len"]
+
+# slice cols by vector of indexes
+cols <- df[, 1:4]
+
+# slice cols by vector of names
+cols_1 <- df[, c("sepal_len", "sepal_wid", "petal_len", "petal_wid")]
+</code>
+</pre>
+            </div>
+            <div id="2_1_h2o-python" class="tab-pane fade">
+<pre>
+<code class="lang-python">
+import h2o
+h2o.init()
+path = "data/iris/iris_wheader.csv"
+df = h2o.import_file(path=path)
+
+# slice 1 column by index
+c1 = df[:,0]
+
+# slice 1 column by name
+c1_1 = df[:, "sepal_len"]
+
+# slice cols by list of indexes
+cols = df[:, range(4)]
+
+# slice cols by a list of names
+cols_1 = df[:, ["sepal_len", "sepal_wid", "petal_len", "petal_wid"]]
+</code>
+</pre>
+            </div>
+        </div>
+    </div>
+    <div id="slicing_h2o_frames__by_row_">
+        <h3>2.2. Munging Data / Slicing H2O Frames (by row)<a href="#slicing_h2o_frames__by_row_"> <em>[link]</em></a></h3>
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#2_2_description">Description</a></li>
+            <li><a data-toggle="tab" href="#2_2_R">R</a></li>
+            <li><a data-toggle="tab" href="#2_2_h2o-R">h2o-R</a></li>
+            <li><a data-toggle="tab" href="#2_2_h2o-python">h2o-python</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="2_2_description" class="tab-pane fade in active">
+<div class="well">
+<p>This example shows how to slice rows columns from a frame of data.</p>
+<p>H2O lazily slices out rows of data, and will only materialize a shared copy upon IO.</p>
+</div>
+            </div>
+            <div id="2_2_R" class="tab-pane fade">
+<pre>
+<code class="lang-r">
+path <- "data/iris/iris_wheader.csv"
+df <- read.csv(path)
+
+# slice 1 row by index
+c1 <- df[15,]
+
+# slice a range of rows
+c1_1 <- df[25:49,]
+
+# slice with a boolean mask
+mask <- df[,"sepal_len"] < 4.4
+cols <- df[mask,]
+
+# filter out missing values
+mask <- is.na(df[,"sepal_len"])
+cols <- df[!mask,]
+</code>
+</pre>
+            </div>
+            <div id="2_2_h2o-R" class="tab-pane fade">
+<pre>
+<code class="lang-r">
+library(h2o)
+path <- "data/iris/iris_wheader.csv"
+h2o.init()
+df <- h2o.importFile(path)
+
+# slice 1 row by index
+c1 <- df[15,]
+
+# slice a range of rows
+c1_1 <- df[25:49,]
+
+# slice with a boolean mask
+mask <- df[,"sepal_len"] < 4.4
+cols <- df[mask,]
+
+# filter out missing values
+mask <- is.na(df[,"sepal_len"])
+cols <- df[!mask,]
+</code>
+</pre>
+            </div>
+            <div id="2_2_h2o-python" class="tab-pane fade">
+<pre>
+<code class="lang-python">
+import h2o
+h2o.init()
+path = "data/iris/iris_wheader.csv"
+df = h2o.import_file(path=path)
+
+# slice 1 row by index
+c1 = df[15,:]
+
+# slice a ramge of rows
+c1_1 = df[range(25,50,1), :]
+
+# slice with a boolean mask
+mask = df["sepal_len"] < 4.4
+cols = df[mask,:]
+
+# filter out missing values
+mask = df["sepal_len"].isna()
+cols = df[~mask,:]  # note how to perform a logical not with the '~'
+</code>
+</pre>
+            </div>
+        </div>
+    </div>
+    <div id="replacing_values_in_h2o_frames">
+        <h3>2.3. Munging Data / Replacing Values In H2O Frames<a href="#replacing_values_in_h2o_frames"> <em>[link]</em></a></h3>
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#2_3_description">Description</a></li>
+            <li><a data-toggle="tab" href="#2_3_R">R</a></li>
+            <li><a data-toggle="tab" href="#2_3_h2o-R">h2o-R</a></li>
+            <li><a data-toggle="tab" href="#2_3_h2o-python">h2o-python</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="2_3_description" class="tab-pane fade in active">
+<div class="well">
+<p>This example shows how to replace values in a frame of data.</p>
+</div>
+            </div>
+            <div id="2_3_R" class="tab-pane fade">
+<pre>
+<code class="lang-r">
+path <- "data/iris/iris_wheader.csv"
+df <- read.csv(path)
+
+# replace a single numerical datum
+df[15,3] <- 2
+
+# replace a single categorical datum
+df[15,5] <- "versicolor"
+
+# replace a whole column
+df[,1] <- 3*df[,1]
+
+# replace by row mask
+df[df[,"sepal_len"] < 4.4, "sepal_len"] <- 22
+
+# replacement with ifelse
+df[,"sepal_len"] <- ifelse(df[,"sepal_len"] < 4.4, 22, df[,"sepal_len"])
+
+# replace missing values with 0
+df[is.na(df[,"sepal_len"]), "sepal_len"] <- 0
+
+# alternative with ifelse
+df[,"sepal_len"] <- ifelse(is.na(df[,"sepal_len"]), 0, df[,"sepal_len"])
+</code>
+</pre>
+            </div>
+            <div id="2_3_h2o-R" class="tab-pane fade">
+<pre>
+<code class="lang-r">
+library(h2o)
+path <- "data/iris/iris_wheader.csv"
+h2o.init()
+df <- h2o.importFile(path)
+
+# replace a single numerical datum
+df[15,3] <- 2
+
+# replace a single categorical datum
+# unimplemented as of 3.6.0.8 (tibshirani)
+
+# replace a whole column
+df[,1] <- 3*df[,1]
+
+# replace by row mask
+df[df[,"sepal_len"] < 4.4, "sepal_len"] <- 22  # BUG: https://0xdata.atlassian.net/browse/PUBDEV-2520
+
+# replacement with ifelse
+df[,"sepal_len"] <- h2o.ifelse(df[,"sepal_len"] < 4.4, 22, df[,"sepal_len"])
+
+# replace missing values with 0
+df[is.na(df[,"sepal_len"]), "sepal_len"] <- 0
+
+# alternative with ifelse
+df[,"sepal_len"] <- h2o.ifelse(is.na(df[,"sepal_len"]), 0, df[,"sepal_len"])
+</code>
+</pre>
+            </div>
+            <div id="2_3_h2o-python" class="tab-pane fade">
+<pre>
+<code class="lang-python">
+import h2o
+h2o.init()
+path = "data/iris/iris_wheader.csv"
+df = h2o.import_file(path=path)
+
+# replace a single numerical datum
+df[14,2] = 2
+
+# replace a single categorical datum
+# unimplemented as of 3.6.0.8 (tibshirani)
+
+# replace a whole column
+df[0] = 3*df[0]
+
+# replace by row mask
+df[df["sepal_len"] < 4.4, "sepal_len"] = 22  # BUG: https://0xdata.atlassian.net/browse/PUBDEV-2520
+
+# replacement with ifelse
+df["sepal_len"] = (df["sepal_len"] < 4.4).ifelse(22, df["sepal_len"])
+
+# replace missing values with 0
+df[df["sepal_len"].isna(), "sepal_len"] <- 0
+
+# alternative with ifelse
+df["sepal_len"] <- (df["sepal_len"].isna()).ifelse(0, df["sepal_len"])  # note the parantheses!
+
 </code>
 </pre>
             </div>
