@@ -52,9 +52,9 @@
 
     <h2>Section 2.  Munging Data</h2>
     <ul>
-        <li><a href="#slicing_h2o_frames__by_column_">2.1  Slicing H2O Frames (by column)</a></li>
-        <li><a href="#slicing_h2o_frames__by_row_">2.2  Slicing H2O Frames (by row)</a></li>
-        <li><a href="#replacing_values_in_h2o_frames">2.3  Replacing Values In H2O Frames</a></li>
+        <li><a href="#how_do_i_slice_columns_from_a_frame_">2.1  How do I Slice Columns From A Frame?</a></li>
+        <li><a href="#how_do_i_slice_rows_from_a_frame_">2.2  How Do I Slice Rows From A Frame?</a></li>
+        <li><a href="#how_do_i_replace_values_in_a_frame_">2.3  How Do I Replace Values In A Frame?</a></li>
     </ul>
 
     <h2>Section 3.  Training Models</h2>
@@ -93,15 +93,15 @@
             <tr>
                 <td>missing</td>
                 <td>
-                    <a href=#replacing_values_in_h2o_frames>Replacing Values In H2O Frames</a>
+                    <a href=#how_do_i_replace_values_in_a_frame_>How Do I Replace Values In A Frame?</a>
                 </td>
             </tr>
             <tr>
                 <td>munge</td>
                 <td>
-                    <a href=#slicing_h2o_frames__by_column_>Slicing H2O Frames (by column),</a>
-                    <a href=#slicing_h2o_frames__by_row_>Slicing H2O Frames (by row),</a>
-                    <a href=#replacing_values_in_h2o_frames>Replacing Values In H2O Frames</a>
+                    <a href=#how_do_i_slice_columns_from_a_frame_>How do I Slice Columns From A Frame?,</a>
+                    <a href=#how_do_i_slice_rows_from_a_frame_>How Do I Slice Rows From A Frame?,</a>
+                    <a href=#how_do_i_replace_values_in_a_frame_>How Do I Replace Values In A Frame?</a>
                 </td>
             </tr>
             <tr>
@@ -126,14 +126,14 @@
             <tr>
                 <td>replace</td>
                 <td>
-                    <a href=#replacing_values_in_h2o_frames>Replacing Values In H2O Frames</a>
+                    <a href=#how_do_i_replace_values_in_a_frame_>How Do I Replace Values In A Frame?</a>
                 </td>
             </tr>
             <tr>
                 <td>slice</td>
                 <td>
-                    <a href=#slicing_h2o_frames__by_column_>Slicing H2O Frames (by column),</a>
-                    <a href=#slicing_h2o_frames__by_row_>Slicing H2O Frames (by row)</a>
+                    <a href=#how_do_i_slice_columns_from_a_frame_>How do I Slice Columns From A Frame?,</a>
+                    <a href=#how_do_i_slice_rows_from_a_frame_>How Do I Slice Rows From A Frame?</a>
                 </td>
             </tr>
             <tr>
@@ -231,8 +231,8 @@ stopifnot(nrow(h2odf) == 150)
             </div>
         </div>
     </div>
-    <div id="slicing_h2o_frames__by_column_">
-        <h3>2.1. Munging Data / Slicing H2O Frames (by column)<a href="#slicing_h2o_frames__by_column_"> <em>[link]</em></a></h3>
+    <div id="how_do_i_slice_columns_from_a_frame_">
+        <h3>2.1. Munging Data / How do I Slice Columns From A Frame?<a href="#how_do_i_slice_columns_from_a_frame_"> <em>[link]</em></a></h3>
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#2_1_description">Description</a></li>
             <li><a data-toggle="tab" href="#2_1_R">R</a></li>
@@ -312,8 +312,8 @@ cols_1 = df[:, ["sepal_len", "sepal_wid", "petal_len", "petal_wid"]]
             </div>
         </div>
     </div>
-    <div id="slicing_h2o_frames__by_row_">
-        <h3>2.2. Munging Data / Slicing H2O Frames (by row)<a href="#slicing_h2o_frames__by_row_"> <em>[link]</em></a></h3>
+    <div id="how_do_i_slice_rows_from_a_frame_">
+        <h3>2.2. Munging Data / How Do I Slice Rows From A Frame?<a href="#how_do_i_slice_rows_from_a_frame_"> <em>[link]</em></a></h3>
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#2_2_description">Description</a></li>
             <li><a data-toggle="tab" href="#2_2_R">R</a></li>
@@ -399,8 +399,8 @@ cols = df[~mask,:]  # note how to perform a logical not with the '~'
             </div>
         </div>
     </div>
-    <div id="replacing_values_in_h2o_frames">
-        <h3>2.3. Munging Data / Replacing Values In H2O Frames<a href="#replacing_values_in_h2o_frames"> <em>[link]</em></a></h3>
+    <div id="how_do_i_replace_values_in_a_frame_">
+        <h3>2.3. Munging Data / How Do I Replace Values In A Frame?<a href="#how_do_i_replace_values_in_a_frame_"> <em>[link]</em></a></h3>
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#2_3_description">Description</a></li>
             <li><a data-toggle="tab" href="#2_3_R">R</a></li>
