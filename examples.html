@@ -59,6 +59,7 @@
 
     <h2>Section 3.  Training Models</h2>
     <ul>
+        <li><a href="#how_do_i_view_trees_from_a_random_forest_model_">3.1  How Do I View Trees From A Random Forest Model?</a></li>
     </ul>
 
     <h2>Section 4.  Making Predictions</h2>
@@ -77,6 +78,12 @@
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <td>classifier</td>
+                <td>
+                    <a href=#how_do_i_view_trees_from_a_random_forest_model_>How Do I View Trees From A Random Forest Model?</a>
+                </td>
+            </tr>
             <tr>
                 <td>csv</td>
                 <td>
@@ -112,6 +119,12 @@
                 </td>
             </tr>
             <tr>
+                <td>pojo</td>
+                <td>
+                    <a href=#how_do_i_view_trees_from_a_random_forest_model_>How Do I View Trees From A Random Forest Model?</a>
+                </td>
+            </tr>
+            <tr>
                 <td>pull</td>
                 <td>
                     <a href=#how_do_i_import_data_>How Do I Import Data?</a>
@@ -121,6 +134,12 @@
                 <td>push</td>
                 <td>
                     <a href=#how_do_i_upload_data_>How Do I Upload Data?</a>
+                </td>
+            </tr>
+            <tr>
+                <td>randomforest</td>
+                <td>
+                    <a href=#how_do_i_view_trees_from_a_random_forest_model_>How Do I View Trees From A Random Forest Model?</a>
                 </td>
             </tr>
             <tr>
@@ -134,6 +153,12 @@
                 <td>
                     <a href=#how_do_i_slice_columns_from_a_frame_>How do I Slice Columns From A Frame?,</a>
                     <a href=#how_do_i_slice_rows_from_a_frame_>How Do I Slice Rows From A Frame?</a>
+                </td>
+            </tr>
+            <tr>
+                <td>trees</td>
+                <td>
+                    <a href=#how_do_i_view_trees_from_a_random_forest_model_>How Do I View Trees From A Random Forest Model?</a>
                 </td>
             </tr>
             <tr>
@@ -501,6 +526,62 @@ df[df["sepal_len"].isna(), "sepal_len"] <- 0
 
 # alternative with ifelse
 df["sepal_len"] <- (df["sepal_len"].isna()).ifelse(0, df["sepal_len"])  # note the parantheses!
+
+</code>
+</pre>
+            </div>
+        </div>
+    </div>
+    <div id="how_do_i_view_trees_from_a_random_forest_model_">
+        <h3>3.1. Training Models / How Do I View Trees From A Random Forest Model?<a href="#how_do_i_view_trees_from_a_random_forest_model_"> <em>[link]</em></a></h3>
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#3_1_description">Description</a></li>
+            <li><a data-toggle="tab" href="#3_1_h2o-R">h2o-R</a></li>
+            <li><a data-toggle="tab" href="#3_1_h2o-python">h2o-python</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="3_1_description" class="tab-pane fade in active">
+<div class="well">
+<p>This example shows how to build a simple classifier and view/save its POJO.</p>
+</div>
+            </div>
+            <div id="3_1_h2o-R" class="tab-pane fade">
+<pre>
+<code class="lang-r">
+library(h2o)
+path <- "data/iris/iris_wheader.csv"
+h2o.init()
+df <- h2o.importFile(path)
+
+# build a simple random forest classifier
+model <- h2o.randomForest(x=1:4, y=5, training_frame=df)
+
+# print the pojo to screen
+h2o.download_pojo(model)
+
+# save it to your favorite local path
+h2o.download_pojo(model, modelSavePath)
+</code>
+</pre>
+            </div>
+            <div id="3_1_h2o-python" class="tab-pane fade">
+<pre>
+<code class="lang-python">
+import h2o
+h2o.init()
+path = "data/iris/iris_wheader.csv"
+df = h2o.import_file(path=path)
+
+# build a simple random forest classifier
+from h2o.estimators.random_forest import H2ORandomForestEstimator
+model = H2ORandomForestEstimator()
+model.train(x=range(4), y=4, training_frame=df)
+
+# print the pojo to screen
+h2o.download_pojo(model)
+
+# save it to your favorite local path
+h2o.download_pojo(model, modelSavePath)
 
 </code>
 </pre>
